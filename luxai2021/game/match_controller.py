@@ -104,11 +104,11 @@ class MatchController:
         if self.training_agent_count > 1:
             raise ValueError("At most one agent must be trainable.")
 
-        elif self.training_agent_count == 1:
-            print("Running in training mode.", file=sys.stderr)
-
-        elif self.training_agent_count == 0:
-            print("Running in inference-only mode.", file=sys.stderr)
+        # elif self.training_agent_count == 1:
+        #     print("Running in training mode.", file=sys.stderr)
+        #
+        # elif self.training_agent_count == 0:
+        #     print("Running in inference-only mode.", file=sys.stderr)
 
     def reset(self, reset_game=True, randomize_team_order=True):
         """

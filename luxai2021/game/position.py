@@ -5,7 +5,7 @@ from .constants import Constants
 DIRECTIONS = Constants.DIRECTIONS
 
 
-class Position:
+class Position(object):
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -66,4 +66,7 @@ class Position:
         return closest_dir
 
     def __str__(self) -> str:
+        return f"({self.x}, {self.y})"
+
+    def __repr__(self) -> str:
         return f"({self.x}, {self.y})"

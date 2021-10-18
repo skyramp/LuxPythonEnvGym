@@ -391,8 +391,8 @@ class Game:
             True if game is still running
             False if game is over
         """
-        if "log" in self.configs and self.configs["log"]:
-            self.log('Processing turn ' + self.game.state["turn"])
+        # if "log" in self.configs and self.configs["log"]:
+        self.log('Processing turn %d' % self.state["turn"])
 
         if self.replay:
             # Log actions to a replay
@@ -1065,17 +1065,19 @@ class Game:
                 moving_units.add(action.unit_id)
 
         def revert_action(action):
+            new_cell = self.map.get_cell_by_pos(
+                self.get_unit(action.team, action.unit_id).pos.translate(action.direction, 1)
+            )
+
             # reverts a given action such that cellsToActionsToThere has no collisions due to action and all related actions
-            self.log(
-                f"turn {{self.state['turn']}} Unit {{action.unit_id}} collided when trying to move {{action.direction}} to ({{action.newcell.pos.x}}, {{action.newcell.pos.y}})")
+            self.log(f"turn {self.state['turn']} Unit {action.unit_id} collided when trying to move {action.direction} to ({new_cell.pos.x}, {new_cell.pos.y})")
 
             original_cell = self.map.get_cell_by_pos(
                 self.get_unit(action.team, action.unit_id).pos
             )
 
             # get the colliding actions caused by a revert of the given action and then delete them from the mapped origcell provided it is not a city tile
-            colliding_actions = cells_to_actions_to_there[
-                original_cell] if original_cell in cells_to_actions_to_there else None
+            colliding_actions = cells_to_actions_to_there[original_cell] if original_cell in cells_to_actions_to_there else None
             if not original_cell.is_city_tile():
                 if colliding_actions is not None:
                     cells_to_actions_to_there.pop(original_cell)
@@ -1086,14 +1088,15 @@ class Game:
 
         actioned_cells = list(cells_to_actions_to_there.keys())
         for cell in actioned_cells:
+            actions_to_revert = []
             if cell in cells_to_actions_to_there:
                 current_actions = cells_to_actions_to_there[cell]
-                actions_to_revert = []
                 if current_actions is not None:
                     if len(current_actions) > 1:
                         # only revert actions that are going to the same tile that is not a city
                         # if going to the same city tile, we know those actions are from same team units, and is allowed
                         if not cell.is_city_tile():
+                            self.log(f"turn {self.state['turn']} unit collided with another unit")
                             actions_to_revert += current_actions
                     elif len(current_actions) == 1:
                         # if there is just one move action, check there isn't a unit on there that is not moving and not a city tile
@@ -1105,6 +1108,7 @@ class Game:
                                     if unit.id in moving_units:
                                         unit_there_is_still = False
                                 if unit_there_is_still:
+                                    self.log(f"turn {self.state['turn']} unit collided with standing unit")
                                     actions_to_revert.append(action)
 
             # if there are collisions, revert those actions and remove the mapping
