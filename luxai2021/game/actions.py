@@ -436,3 +436,51 @@ class ResearchAction(Action):
             return False
 
         return True
+
+class AnnotateCircleAction(Action):
+    def __init__(self, team, pos):
+        super().__init__(Constants.ACTIONS.DEBUG_ANNOTATE_CIRCLE, team)
+        self.pos = pos
+
+    def to_message(self, game):
+        return f"dc {self.pos.x} {self.pos.y}"
+
+
+class AnnotateXAction(Action):
+    def __init__(self, team, pos):
+        super().__init__(Constants.ACTIONS.DEBUG_ANNOTATE_X, team)
+        self.pos = pos
+
+    def to_message(self, game):
+        return f"dx {self.pos.x} {self.pos.y}"
+
+
+class AnnotateLineAction(Action):
+    def __init__(self, team, pos1, pos2):
+        super().__init__(Constants.ACTIONS.DEBUG_ANNOTATE_LINE, team)
+        self.pos1 = pos1
+        self.pos2 = pos2
+
+    def to_message(self, game):
+        return f"dl {self.pos1.x} {self.pos1.y} {self.pos2.x} {self.pos2.y}"
+
+
+class AnnotateTextAction(Action):
+    def __init__(self, team, pos, msg, font_size=16):
+        super().__init__(Constants.ACTIONS.DEBUG_ANNOTATE_TEXT, team)
+        self.pos = pos
+        self.message = msg
+        self.fontsize=font_size
+
+    def to_message(self, game):
+        return f"dt {self.pos.x} {self.pos.y} '{self.message}' {self.fontsize}"
+
+
+class AnnotateSideTextAction(Action):
+    def __init__(self, team, msg):
+        super().__init__(Constants.ACTIONS.DEBUG_ANNOTATE_SIDETEXT, team)
+        self.message = msg
+
+    def to_message(self, game):
+        return f"dst '{self.message}'"
+
